@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+    environment {
+        REPO_URL = 'https://github.com/GDIATTA/Tuto_Jenkins.git'
+    }
+    stages {
+        stage('Cloner repo privé') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: '1f4abb48-0223-4820-b7a9-050f95b67369', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                    sh '''
+                        echo "Suppression du dossier existant si besoin..."
+                        rm -rf Tuto_Jenkins
+                        
+                        echo "Clonage en cours avec $GIT_USER"
+                        git clone https://$GIT_USER:$GIT_PASS@github.com/GDIATTA/Tuto_Jenkins.git
+                        ls Tuto_Jenkins
+                    '''
+                }
+            }
+        }
+        stage('Tests') {
+            steps {
+                echo 'Tests simulés...'
+            }
+        }
+        stage('Exécuter app.py') {
+            steps {
+                sh '''
+                    echo "Exécution de app.py..."
+                    cd Tuto_Jenkins
+                    python3 app.py
+                '''
+            }
+        }
+    }
+}
